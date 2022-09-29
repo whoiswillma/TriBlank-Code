@@ -1,3 +1,4 @@
+import gc
 import random
 
 import torch
@@ -81,6 +82,11 @@ def train_epoch_re2(
         if max_grad_norm:
             nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
         optim.step()
+
+        del output
+        del loss
+        torch.cuda.empty_cache()
+        gc.collect()
 
 
 def eval_contingency_table_re2(model, tokenizer, dataset, re2_dataset, blank=False):

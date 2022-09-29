@@ -1,3 +1,4 @@
+import gc
 import random
 
 import torch
@@ -108,6 +109,11 @@ def train_epoch_tri(
         if max_grad_norm:
             nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
         optim.step()
+
+        del output
+        del loss
+        torch.cuda.empty_cache()
+        gc.collect()
 
 
 def eval_contingency_table_tri(model, tokenizer, dataset, tri_dataset, blank=False):
